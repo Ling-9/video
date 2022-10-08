@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.fgsqw</groupId>
+    <artifactId>video</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>mv-web</module>
+        <module>mv-beans</module>
+        <module>mv-dao</module>
+        <module>mv-iservice</module>
+        <module>mv-serviceimpl</module>
+        <module>mv-utils</module>
+    </modules>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.6.4</version>
+        <relativePath /> <!-- lookup parent from repository -->
+    </parent>
+
+    <properties>
+        <video.version>1.0-SNAPSHOT</video.version>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <hutool.version>5.7.22</hutool.version>
+        <mybatis-plus.version>3.3.1</mybatis-plus.version>
+        <druid.version>1.2.6</druid.version>
+        <swagger2.version>2.9.2</swagger2.version>
+        <swagger2Ui.version>1.9.6</swagger2Ui.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.fgsqw</groupId>
+                <artifactId>mv-beans</artifactId>
+                <version>${video.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fgsqw</groupId>
+                <artifactId>mv-dao</artifactId>
+                <version>${video.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fgsqw</groupId>
+                <artifactId>mv-iservice</artifactId>
+                <version>${video.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fgsqw</groupId>
+                <artifactId>mv-serviceimpl</artifactId>
+                <version>${video.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fgsqw</groupId>
+                <artifactId>mv-utils</artifactId>
+                <version>${video.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+
+            <!--swagger2-->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${swagger2.version}</version>
+            </dependency>
+
+            <!--swagger2-UI-->
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>swagger-bootstrap-ui</artifactId>
+                <version>${swagger2Ui.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>
