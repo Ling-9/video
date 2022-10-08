@@ -18,6 +18,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.fgsqw</groupId>
             <artifactId>mv-beans</artifactId>
         </dependency>

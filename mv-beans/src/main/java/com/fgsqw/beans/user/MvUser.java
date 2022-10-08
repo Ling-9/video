@@ -30,7 +30,7 @@ public class MvUser implements Serializable {
 
     @ApiModelProperty(value = "sid")
     @JsonFormat(shape = JsonFormat.Shape.STRING)
-    @TableId("USER_ID")
+    @TableId("sid")
     private Long sid;
 
     @ApiModelProperty(value = "用户账号(登录名)")
