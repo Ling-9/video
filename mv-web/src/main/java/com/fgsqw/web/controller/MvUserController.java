@@ -1,7 +1,7 @@
 package com.fgsqw.web.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.fgsqw.beans.common.Result;
+import com.fgsqw.beans.result.Result;
 import com.fgsqw.beans.user.MvUser;
 import com.fgsqw.iservice.IMvUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +21,11 @@ public class MvUserController {
     IMvUserService userService;
 
     @GetMapping("getUserByName")
-    public Result getUserByName(String username){
+    public Result<List<MvUser>> getUserByName(String username){
         MvUser user = userService.getOne(new LambdaQueryWrapper<MvUser>().eq(MvUser::getUserName, username));
         List<MvUser> list = userService.list(new LambdaQueryWrapper<MvUser>().eq(MvUser::getUserName, username));
         Result<List<MvUser>> ok = Result.ok(list);
         Result.fail();
-        return Result.ok(user);
+        return Result.ok(list);
     }
 }

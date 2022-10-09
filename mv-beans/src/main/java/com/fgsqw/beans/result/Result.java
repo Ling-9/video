@@ -1,68 +1,81 @@
 package com.fgsqw.beans.result;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import org.springframework.lang.Nullable;
 
-import java.util.Collection;
-
-
-@Setter
-@Getter
-@ToString
+/**
+ * 全局统一返回结果类
+ */
+@Data
+@ApiModel(value = "全局统一返回结果")
 public class Result<T> {
 
+    @ApiModelProperty(value = "返回码")
+    private Integer returnCode;
+
+    @ApiModelProperty(value = "返回消息")
+    private String resMessage;
+
+    @ApiModelProperty(value = "返回数据")
     private T object;
-    private Collection<T> beans;
+
+    @ApiModelProperty(value = "条数")
     private Integer total = 0;
-    private String returnMessage;
-    private String returnCode;
 
-    private Result(String returnCode, String returnMessage) {
+    private Result(Integer returnCode,String resMessage) {
         this.returnCode = returnCode;
-        this.returnMessage = returnMessage;
+        this.resMessage = resMessage;
     }
 
-    private Result(T object, String returnCode, String returnMessage) {
-        this.returnCode = returnCode;
-        this.returnMessage = returnMessage;
+    private Result(ResultCodeEnum resultCodeEnum) {
+        this.returnCode = resultCodeEnum.getCode();
+        this.resMessage = resultCodeEnum.getMessage();
+    }
+
+    private Result(T object, ResultCodeEnum resultCodeEnum) {
+        this.returnCode = resultCodeEnum.getCode();
+        this.resMessage = resultCodeEnum.getMessage();
         this.object = object;
     }
 
-    private Result(Integer total ,T object, String returnCode, String returnMessage) {
-        this.total=total;
-        this.returnCode = returnCode;
-        this.returnMessage = returnMessage;
+    private Result(T object,ResultCodeEnum resultCodeEnum,Integer total) {
+        this.returnCode = resultCodeEnum.getCode();
+        this.resMessage = resultCodeEnum.getMessage();
         this.object = object;
+        this.total = total;
     }
 
-    public static final <T> Result<T> ok() {
-        return new Result<>("0", "ok");
+    public static<T> Result<T> ok() {
+        return new Result<>(ResultCodeEnum.SUCCESS);
     }
 
-    public static final <T> Result<T> ok(String returnMessage) {
-        return new Result<>("0", returnMessage);
+    public static<T> Result<T> ok(String resMessage) {
+        return new Result<>(200,resMessage);
     }
 
-    public static final <T> Result<T> ok(String returnCode, String returnMessage) {
-        return new Result<>(returnCode, returnMessage);
+    public static<T> Result<T> ok(ResultCodeEnum resultCodeEnum) {
+        return new Result<>(resultCodeEnum);
     }
 
-    public static final <T> Result<T> ok(@Nullable T object) {
-        return new Result<>(object, "0", "ok");
+    public static<T> Result<T> ok(@Nullable T object) {
+        return new Result<>(object,ResultCodeEnum.SUCCESS);
     }
 
-    public static final <T> Result<T> fail() {
-        return new Result<>("-1" ,"error");
+    public static<T> Result<T> ok(@Nullable T object,Integer total) {
+        return new Result<>(object,ResultCodeEnum.SUCCESS,total);
     }
 
-    public static final <T> Result<T> fail(String returnMessage) {
-        return new Result<>("-1", returnMessage);
+    public static<T> Result<T> fail() {
+        return new Result<>(ResultCodeEnum.FAIL);
     }
 
-    public static final <T> Result<T> fail(String returnCode, String returnMessage) {
-        return new Result<>(returnCode, returnMessage);
+    public static<T> Result<T> fail(ResultCodeEnum resultCodeEnum) {
+        return new Result<>(resultCodeEnum);
     }
 
+    public static<T> Result<T> fail(String resMessage) {
+        return new Result<>(-9999,resMessage);
+    }
 }
