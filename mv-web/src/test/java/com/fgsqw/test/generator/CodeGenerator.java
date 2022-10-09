@@ -1,4 +1,4 @@
-package com.fgsqw.generator;
+package com.fgsqw.test.generator;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
