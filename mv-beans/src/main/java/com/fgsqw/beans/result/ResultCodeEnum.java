@@ -1,4 +1,4 @@
-package com.fgsqw.beans.common;
+package com.fgsqw.beans.result;
 
 import lombok.Getter;
 
