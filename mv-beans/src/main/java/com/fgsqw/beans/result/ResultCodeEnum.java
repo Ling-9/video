@@ -6,6 +6,7 @@ import lombok.Getter;
 public enum ResultCodeEnum {
     SUCCESS(200,"请求成功！"),
     FAIL(-9999,"请求失败！"),
+    ISNULL(-9999,"参数为空！")
 
     ;
 
