@@ -1,12 +1,15 @@
 package com.fgsqw.web.common;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import com.fgsqw.EmailUtil;
+import com.fgsqw.beans.result.Result;
+import com.fgsqw.beans.user.MvUser;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
@@ -21,8 +24,10 @@ import java.io.IOException;
 public class CommonController {
     @Autowired
     private DefaultKaptcha defaultKaptcha;
+    @Autowired
+    private EmailUtil emailUtil;
 
-    @ApiOperation(value = "验证码")
+    @ApiOperation(value = "图形验证码")
     @GetMapping(value = "/captcha", produces = "image/jpeg")
     public void captcha(HttpServletRequest request, HttpServletResponse response) {
         // 定义response输出类型为image/jpeg类型
@@ -38,7 +43,6 @@ public class CommonController {
         //-------------------生成验证码 begin --------------------------
         //获取验证码文本内容
         String text = defaultKaptcha.createText();
-        System.out.println("验证码内容：" + text);
         //将验证码文本内容放入session
         request.getSession().setAttribute("captcha", text);
         //根据文本验证码内容创建图形验证码
@@ -61,5 +65,20 @@ public class CommonController {
             }
         }
         //-------------------生成验证码 end --------------------------
+    }
+
+    @ApiOperation(value = "注册时发送邮件验证码")
+    @PostMapping(value = "/emailCode")
+    public Result emailCode(@RequestBody MvUser user) {
+        if(ObjectUtil.isEmpty(user) && StrUtil.isBlank(user.getEmail())) {
+            return Result.fail("注册参数缺失！");
+        }
+        try {
+            emailUtil.sendCodeMessage(user);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.fail("邮箱验证码发送失败！");
+        }
+        return Result.ok();
     }
 }
