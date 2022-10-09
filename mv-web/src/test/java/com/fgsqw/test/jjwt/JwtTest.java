@@ -1,4 +1,4 @@
-package com.fgsqw.jjwt;
+package com.fgsqw.test.jjwt;
 
 
 import io.jsonwebtoken.*;
