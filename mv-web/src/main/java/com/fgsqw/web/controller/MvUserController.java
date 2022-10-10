@@ -1,15 +1,13 @@
 package com.fgsqw.web.controller;
 
-import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fgsqw.beans.result.Result;
-import com.fgsqw.beans.result.ResultCodeEnum;
 import com.fgsqw.beans.user.MvUser;
-import com.fgsqw.iservice.IMvUserService;
+import com.fgsqw.beans.user.RegisterUser;
+import com.fgsqw.iservice.user.IMvUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -30,27 +28,25 @@ public class MvUserController {
         return Result.ok(list);
     }
 
-    @PostMapping("Registration")
-    public Result regMvUser(@RequestBody MvUser user){
-        if(ObjectUtil.isEmpty(user)){
-            return Result.fail(ResultCodeEnum.ISNULL);
-        }
-        //redis 验证码校验
-        creUser(user);
+//    // 图形验证码登录
+//    @PostMapping("login")
+//    public Result login(@RequestBody RegisterUser user){
+//        try {
+//
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            return Result.fail("登录失败！");
+//        }
+//    }
+
+    @PostMapping("registration")
+    public Result regMvUser(@RequestBody RegisterUser user){
         try {
-            userService.save(user);
+            return userService.regMvUser(user);
         }catch (Exception e){
             e.printStackTrace();
             return Result.fail("注册失败！");
         }
-        return Result.ok();
     }
 
-    private void creUser(MvUser user) {
-        user.setIsVip(false);
-        user.setStatus(0);
-        user.setPerm(0);
-        user.setCreateTime(LocalDateTime.now());
-        user.setDelFlag(false);
-    }
 }
