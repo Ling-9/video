@@ -3,7 +3,7 @@ server:
 spring:
   datasource:
     username: root
-    password: 1710885741PCL..
+    password: ..
     url: jdbc:mysql://localhost:3306/video?useUnicode=true&characterEncoding=utf8&useTimezone=true&serverTimezone=GMT%2B8
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
@@ -38,6 +38,16 @@ spring:
       use-global-data-source-stat: true
       # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
       connect-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+  redis:
+    database: 0
+    host: xc27.top
+    port: 16379
+    password: ..
+    jedis:
+      pool:
+        max-idle: 8
+        max-wait: -1
+        min-idle: 0
   # 发送邮件配置
   mail:
     host: smtp.163.com

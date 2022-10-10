@@ -4,7 +4,10 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.fgsqw.EmailUtil;
 import com.fgsqw.beans.result.Result;
-import com.fgsqw.beans.user.MvUser;
+import com.fgsqw.beans.result.ResultCodeEnum;
+import com.fgsqw.beans.user.RegisterUser;
+import com.fgsqw.iservice.redis.IRedisCacheService;
+import com.fgsqw.iservice.user.IMvUserService;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +26,13 @@ import java.io.IOException;
 @Slf4j
 public class CommonController {
     @Autowired
+    private EmailUtil emailUtil;
+    @Autowired
+    private IRedisCacheService cacheService;
+    @Autowired
     private DefaultKaptcha defaultKaptcha;
     @Autowired
-    private EmailUtil emailUtil;
+    private IMvUserService userService;
 
     @ApiOperation(value = "图形验证码")
     @GetMapping(value = "/captcha", produces = "image/jpeg")
@@ -69,16 +76,24 @@ public class CommonController {
 
     @ApiOperation(value = "注册时发送邮件验证码")
     @PostMapping(value = "/emailCode")
-    public Result emailCode(@RequestBody MvUser user) {
-        if(ObjectUtil.isEmpty(user) && StrUtil.isBlank(user.getEmail())) {
-            return Result.fail("注册参数缺失！");
+    public Result emailCode(@RequestBody RegisterUser user) {
+        if(ObjectUtil.isEmpty(user) && StrUtil.isBlank(user.getEmail()) && StrUtil.isBlank(user.getVerifyCode())) {
+            return Result.fail(ResultCodeEnum.ISNULL);
         }
         try {
-            emailUtil.sendCodeMessage(user);
+            // 判断是否已经注册
+            if(userService.checkUserEmail(user.getEmail())){
+                return Result.fail("当前邮箱已经被注册!");
+            }
+            // 发送邮件前校验验证码
+
+            // 发送验证码
+            String verifyCode = emailUtil.sendCodeMessage(user);
+            cacheService.setString(user.getUserName() + "_verifyCode",verifyCode,180);
         }catch (Exception e){
             e.printStackTrace();
             return Result.fail("邮箱验证码发送失败！");
         }
-        return Result.ok();
+        return Result.ok(ResultCodeEnum.VERIFY_CODE_SUCCESS);
     }
 }
