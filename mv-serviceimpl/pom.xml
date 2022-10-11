@@ -41,6 +41,11 @@
             <groupId>com.fgsqw</groupId>
             <artifactId>mv-iservice</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.fgsqw</groupId>
+            <artifactId>mv-utils</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

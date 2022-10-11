@@ -1,23 +1,33 @@
 package com.fgsqw.iserviceImpl.user;
 
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fgsqw.JwtUtil;
 import com.fgsqw.beans.result.Result;
 import com.fgsqw.beans.result.ResultCodeEnum;
 import com.fgsqw.beans.user.MvUser;
-import com.fgsqw.beans.user.RegisterUser;
+import com.fgsqw.beans.user.RegLogUser;
 import com.fgsqw.dao.user.MvUserMapper;
 import com.fgsqw.iservice.redis.IRedisCacheService;
 import com.fgsqw.iservice.user.IMvUserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -31,11 +41,40 @@ import java.util.Objects;
 @Service
 public class MvUserServiceImpl extends ServiceImpl<MvUserMapper, MvUser> implements IMvUserService {
 
+    @Value("${jwt.tokenHeader}")
+    private String tokenHeader;
     @Autowired
-    IRedisCacheService cacheService;
+    private JwtUtil jwtUtil;
+    @Autowired
+    private IRedisCacheService cacheService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @Override
-    public Result regMvUser(RegisterUser user) {
+    public Result<Map<String, Object>> login(RegLogUser user) {
+        // 用户认证
+        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUserName());
+        if(ObjectUtil.isNull(userDetails) || passwordEncoder.matches(userDetails.getPassword(),user.getPasswd())){
+            return Result.fail("用户名或密码错误!");
+        }
+        if(userDetails.isEnabled()){
+            return Result.fail("账号被禁用!");
+        }
+        // 更新security 登录用户
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        // 认证通过 生成jwt
+        String token = jwtUtil.generateToken(userDetails);
+        HashMap<String, Object> tokenMap = new HashMap<>();
+        tokenMap.put("token",token);
+        tokenMap.put("tokenHeader",tokenHeader);
+        return Result.ok("登录成功!",tokenMap);
+    }
+
+    @Override
+    public Result registerUser(RegLogUser user) {
         String userName = user.getUserName();
         String passwd = user.getPasswd();
         String email = user.getEmail();
@@ -80,7 +119,15 @@ public class MvUserServiceImpl extends ServiceImpl<MvUserMapper, MvUser> impleme
         return this.getOne(Wrappers.<MvUser>lambdaQuery().eq(MvUser::getUserName,username));
     }
 
-    private MvUser creUser(RegisterUser user) {
+    @Override
+    public RegLogUser getRegLogUserByUserName(String username) {
+        MvUser mvUser = this.getOne(Wrappers.<MvUser>lambdaQuery().eq(MvUser::getUserName, username));
+        RegLogUser regLogUser = new RegLogUser();
+        BeanUtils.copyProperties(mvUser,regLogUser);
+        return regLogUser;
+    }
+
+    private MvUser creUser(RegLogUser user) {
         MvUser mvUser = new MvUser();
         BeanUtils.copyProperties(user,mvUser);
         mvUser.setSid(IdUtil.getSnowflakeNextId());

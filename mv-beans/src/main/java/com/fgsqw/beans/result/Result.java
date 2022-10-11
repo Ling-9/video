@@ -29,6 +29,11 @@ public class Result<T> {
         this.resMessage = resMessage;
     }
 
+    private Result(String resMessage,T object) {
+        this.resMessage = resMessage;
+        this.object = object;
+    }
+
     private Result(ResultCodeEnum resultCodeEnum) {
         this.returnCode = resultCodeEnum.getCode();
         this.resMessage = resultCodeEnum.getMessage();
@@ -61,6 +66,10 @@ public class Result<T> {
 
     public static<T> Result<T> ok(@Nullable T object) {
         return new Result<>(object,ResultCodeEnum.SUCCESS);
+    }
+
+    public static<T> Result<T> ok(String resMessage,@Nullable T object) {
+        return new Result<>(resMessage,object);
     }
 
     public static<T> Result<T> ok(@Nullable T object,Integer total) {

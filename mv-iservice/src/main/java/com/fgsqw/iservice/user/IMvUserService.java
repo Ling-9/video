@@ -3,7 +3,7 @@ package com.fgsqw.iservice.user;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fgsqw.beans.result.Result;
 import com.fgsqw.beans.user.MvUser;
-import com.fgsqw.beans.user.RegisterUser;
+import com.fgsqw.beans.user.RegLogUser;
 
 /**
  * <p>
@@ -15,11 +15,15 @@ import com.fgsqw.beans.user.RegisterUser;
  */
 public interface IMvUserService extends IService<MvUser> {
 
-    Result regMvUser(RegisterUser user);
+    Result login(RegLogUser user);
+
+    Result registerUser(RegLogUser user);
 
     Boolean checkUserName(String username);
 
     Boolean checkUserEmail(String email);
 
     MvUser getMvUserByUserName(String username);
+
+    RegLogUser getRegLogUserByUserName(String username);
 }
