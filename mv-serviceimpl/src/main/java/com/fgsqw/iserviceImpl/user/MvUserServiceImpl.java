@@ -14,7 +14,7 @@ import com.fgsqw.iservice.redis.IRedisCacheService;
 import com.fgsqw.iservice.user.IMvUserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -46,8 +46,8 @@ public class MvUserServiceImpl extends ServiceImpl<MvUserMapper, MvUser> impleme
             return Result.fail(ResultCodeEnum.ISNULL);
         }
         // 密码加密
-//        String encode = new BCryptPasswordEncoder().encode(passwd);
-//        user.setPasswd(encode);
+        String encode = new BCryptPasswordEncoder().encode(passwd);
+        user.setPasswd(encode);
         // 校验邮箱验证码
         String cacheVerify = cacheService.getString(userName + "_verifyCode");
         if(StrUtil.isBlank(cacheVerify)){
@@ -73,6 +73,11 @@ public class MvUserServiceImpl extends ServiceImpl<MvUserMapper, MvUser> impleme
     public Boolean checkUserEmail(String email) {
         MvUser user = this.getOne(Wrappers.<MvUser>lambdaQuery().eq(MvUser::getEmail, email));
         return Objects.nonNull(user);
+    }
+
+    @Override
+    public MvUser getMvUserByUserName(String username) {
+        return this.getOne(Wrappers.<MvUser>lambdaQuery().eq(MvUser::getUserName,username));
     }
 
     private MvUser creUser(RegisterUser user) {
