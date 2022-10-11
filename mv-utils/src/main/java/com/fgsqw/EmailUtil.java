@@ -1,6 +1,6 @@
 package com.fgsqw;
 
-import com.fgsqw.beans.user.RegisterUser;
+import com.fgsqw.beans.user.RegLogUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -28,7 +28,7 @@ public class EmailUtil {
         mailSender.send(msg);
     }
 
-    public String sendCodeMessage(RegisterUser user) throws Exception{
+    public String sendCodeMessage(RegLogUser user) throws Exception{
         String verifyCode = generateVerifyCode(6);
         // 创建一个邮件对象
         SimpleMailMessage msg = new SimpleMailMessage();

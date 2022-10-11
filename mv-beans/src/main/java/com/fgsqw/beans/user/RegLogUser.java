@@ -9,8 +9,8 @@ import java.io.Serializable;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="注册对象", description="")
-public class RegisterUser implements Serializable {
+@ApiModel(value="注册/登录对象", description="")
+public class RegLogUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -26,6 +26,9 @@ public class RegisterUser implements Serializable {
     @ApiModelProperty(value = "手机号码")
     private String phone;
 
-    @ApiModelProperty(value = "邮箱验证码")
+    @ApiModelProperty(value = "验证码")
     private String verifyCode;
+
+    @ApiModelProperty(value = "状态：0 正常 1 封禁")
+    private Integer status;
 }

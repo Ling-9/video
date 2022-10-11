@@ -5,7 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.fgsqw.EmailUtil;
 import com.fgsqw.beans.result.Result;
 import com.fgsqw.beans.result.ResultCodeEnum;
-import com.fgsqw.beans.user.RegisterUser;
+import com.fgsqw.beans.user.RegLogUser;
 import com.fgsqw.iservice.redis.IRedisCacheService;
 import com.fgsqw.iservice.user.IMvUserService;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
@@ -76,7 +76,7 @@ public class CommonController {
 
     @ApiOperation(value = "注册时发送邮件验证码")
     @PostMapping(value = "/emailCode")
-    public Result emailCode(@RequestBody RegisterUser user) {
+    public Result emailCode(@RequestBody RegLogUser user) {
         if(ObjectUtil.isEmpty(user) && StrUtil.isBlank(user.getEmail()) && StrUtil.isBlank(user.getVerifyCode())) {
             return Result.fail(ResultCodeEnum.ISNULL);
         }

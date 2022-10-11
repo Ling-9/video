@@ -13,7 +13,7 @@ import java.util.Collection;
 @AllArgsConstructor
 public class LoginUser implements UserDetails {
 
-    private MvUser mvUser;
+    private RegLogUser logUser;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -22,12 +22,12 @@ public class LoginUser implements UserDetails {
 
     @Override
     public String getPassword() {
-        return mvUser.getPasswd();
+        return logUser.getPasswd();
     }
 
     @Override
     public String getUsername() {
-        return mvUser.getUserName();
+        return logUser.getUserName();
     }
 
     @Override
@@ -47,6 +47,6 @@ public class LoginUser implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return logUser.getStatus() == 0;
     }
 }
