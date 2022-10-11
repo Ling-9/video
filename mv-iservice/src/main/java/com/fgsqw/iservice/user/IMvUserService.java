@@ -20,4 +20,6 @@ public interface IMvUserService extends IService<MvUser> {
     Boolean checkUserName(String username);
 
     Boolean checkUserEmail(String email);
+
+    MvUser getMvUserByUserName(String username);
 }
