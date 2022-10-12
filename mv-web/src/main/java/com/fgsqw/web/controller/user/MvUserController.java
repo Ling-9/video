@@ -1,14 +1,17 @@
 package com.fgsqw.web.controller.user;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import cn.hutool.core.util.ObjectUtil;
 import com.fgsqw.beans.result.Result;
 import com.fgsqw.beans.user.MvUser;
 import com.fgsqw.beans.user.RegLogUser;
 import com.fgsqw.iservice.user.IMvUserService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
+import java.util.Map;
 
 
 @RestController
@@ -19,31 +22,37 @@ public class MvUserController {
     @Autowired
     IMvUserService userService;
 
-    @GetMapping("getUserByName")
-    public Result<List<MvUser>> getUserByName(String username){
-        MvUser user = userService.getOne(new LambdaQueryWrapper<MvUser>().eq(MvUser::getUserName, username));
-        List<MvUser> list = userService.list(new LambdaQueryWrapper<MvUser>().eq(MvUser::getUserName, username));
-        Result<List<MvUser>> ok = Result.ok(list);
-        Result.fail();
-        return Result.ok(list);
-    }
-
     // 验证码登录,登录后返回Token
+    @ApiOperation(value = "登录之后返回Token")
     @PostMapping("login")
-    public Result login(@RequestBody RegLogUser user){
+    public Result<Map<String, Object>> login(@RequestBody RegLogUser user,HttpServletRequest request){
         try {
-            return userService.login(user);
+            return userService.login(user,request);
         }catch (Exception e){
             e.printStackTrace();
             return Result.fail("登录失败！");
         }
     }
 
+    @ApiOperation(value = "退出登录")
     @GetMapping("logout")
     public Result logout(){
         return null;
     }
 
+    @ApiOperation(value = "获取当前登录用户信息")
+    @GetMapping("info")
+    public Result<MvUser> getUserInfo(Principal principal){
+        if(ObjectUtil.isEmpty(principal)){
+            return Result.ok();
+        }
+        String name = principal.getName();
+        MvUser user = userService.getMvUserByUserName(name);
+        user.setPasswd(null);
+        return Result.ok(user);
+    }
+
+    @ApiOperation(value = "注册用户")
     @PostMapping("register")
     public Result registerUser(@RequestBody RegLogUser user){
         try {
