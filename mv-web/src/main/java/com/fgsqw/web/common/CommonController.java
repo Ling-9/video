@@ -1,5 +1,7 @@
 package com.fgsqw.web.common;
 
+import cn.hutool.captcha.CaptchaUtil;
+import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.fgsqw.EmailUtil;
@@ -74,19 +76,66 @@ public class CommonController {
         //-------------------生成验证码 end --------------------------
     }
 
+    @ApiOperation(value = "图形验证码Hutool")
+    @GetMapping(value = "/captcha2", produces = "image/jpeg")
+    public void captcha2(HttpServletRequest request, HttpServletResponse response) {
+        // 定义response输出类型为image/jpeg类型
+        response.setDateHeader("Expires", 0);
+        // Set standard HTTP/1.1 no-cache headers.
+        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+        // 设置IE扩展的HTTP / 1.1无缓存标头（使用addHeader）。
+        response.addHeader("Cache-Control", "post-check=0, pre-check=0");
+        // 设置标准的HTTP / 1.0无缓存标头。
+        response.setHeader("Pragma", "no-cache");
+        // 返回一张图片
+        response.setContentType("image/jpeg");
+        //-------------------生成验证码 begin --------------------------
+        //定义图形验证码的长和宽
+        LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(200, 100);
+        //验证图形验证码的有效性，返回boolean值
+//                lineCaptcha.verify("1234");
+        //获取验证码文本内容
+        String text = lineCaptcha.getCode();
+        //将验证码文本内容放入session
+        request.getSession().setAttribute("captcha", text);
+        //根据文本验证码内容创建图形验证码
+        BufferedImage image = lineCaptcha.getImage();
+        ServletOutputStream outputStream = null;
+        try {
+            outputStream = response.getOutputStream();
+            //输出流输出图片，格式为jpg
+            ImageIO.write(image, "jpg", outputStream);
+            outputStream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (null != outputStream) {
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        //-------------------生成验证码 end --------------------------
+    }
+
     @ApiOperation(value = "注册时发送邮件验证码")
     @PostMapping(value = "/emailCode")
-    public Result emailCode(@RequestBody RegLogUser user) {
+    public Result emailCode(@RequestBody RegLogUser user,HttpServletRequest request) {
         if(ObjectUtil.isEmpty(user) && StrUtil.isBlank(user.getEmail()) && StrUtil.isBlank(user.getVerifyCode())) {
             return Result.fail(ResultCodeEnum.ISNULL);
         }
         try {
+            String captcha = (String) request.getSession().getAttribute("captcha");
+            // 发送邮件前校验验证码
+            if(StrUtil.isEmpty(captcha) && !StrUtil.equals(user.getVerifyCode(),captcha)){
+                return Result.fail("验证码错误,请重新输入!");
+            }
             // 判断是否已经注册
             if(userService.checkUserEmail(user.getEmail())){
-                return Result.fail("当前邮箱已经被注册!");
+                return Result.fail("当前邮箱已被注册!");
             }
-            // 发送邮件前校验验证码
-
             // 发送验证码
             String verifyCode = emailUtil.sendCodeMessage(user);
             cacheService.setString(user.getUserName() + "_verifyCode",verifyCode,180);

@@ -68,10 +68,10 @@ spring:
               port: 465
               class: javax.net.ssl.SSLSocketFactory
 jwt:
-  tokenHeader: jwtHeader
+  tokenHeader: Authorization
   # JWT 加密密钥
   secret: video
   # JWT 超时时间（60 * 60 * 24）
   expiration: 604800
   # JWT 负载头
-  tokenHead: VIDEO
+  tokenHead: Bearer

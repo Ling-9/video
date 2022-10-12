@@ -25,6 +25,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,8 +42,8 @@ import java.util.Objects;
 @Service
 public class MvUserServiceImpl extends ServiceImpl<MvUserMapper, MvUser> implements IMvUserService {
 
-    @Value("${jwt.tokenHeader}")
-    private String tokenHeader;
+    @Value("${jwt.tokenHead}")
+    private String tokenHead;
     @Autowired
     private JwtUtil jwtUtil;
     @Autowired
@@ -53,7 +54,12 @@ public class MvUserServiceImpl extends ServiceImpl<MvUserMapper, MvUser> impleme
     private UserDetailsService userDetailsService;
 
     @Override
-    public Result<Map<String, Object>> login(RegLogUser user) {
+    public Result<Map<String, Object>> login(RegLogUser user, HttpServletRequest request) {
+        String captcha = (String) request.getSession().getAttribute("captcha");
+        String verifyCode = user.getVerifyCode();
+        if(StrUtil.isEmpty(verifyCode) && !StrUtil.equals(captcha,verifyCode)){
+            return Result.fail("验证码错误,请重新输入!");
+        }
         // 用户认证
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUserName());
         if(ObjectUtil.isNull(userDetails) || passwordEncoder.matches(userDetails.getPassword(),user.getPasswd())){
@@ -69,7 +75,7 @@ public class MvUserServiceImpl extends ServiceImpl<MvUserMapper, MvUser> impleme
         String token = jwtUtil.generateToken(userDetails);
         HashMap<String, Object> tokenMap = new HashMap<>();
         tokenMap.put("token",token);
-        tokenMap.put("tokenHeader",tokenHeader);
+        tokenMap.put("tokenHead",tokenHead);
         return Result.ok("登录成功!",tokenMap);
     }
 
@@ -116,7 +122,10 @@ public class MvUserServiceImpl extends ServiceImpl<MvUserMapper, MvUser> impleme
 
     @Override
     public MvUser getMvUserByUserName(String username) {
-        return this.getOne(Wrappers.<MvUser>lambdaQuery().eq(MvUser::getUserName,username));
+        return this.getOne(Wrappers.<MvUser>lambdaQuery()
+                .eq(MvUser::getUserName,username)
+                .eq(MvUser::getStatus,0)
+                .eq(MvUser::getDelFlag,0));
     }
 
     @Override

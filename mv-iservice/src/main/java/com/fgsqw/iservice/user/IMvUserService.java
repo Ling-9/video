@@ -5,6 +5,9 @@ import com.fgsqw.beans.result.Result;
 import com.fgsqw.beans.user.MvUser;
 import com.fgsqw.beans.user.RegLogUser;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
+
 /**
  * <p>
  *  服务类
@@ -15,7 +18,7 @@ import com.fgsqw.beans.user.RegLogUser;
  */
 public interface IMvUserService extends IService<MvUser> {
 
-    Result login(RegLogUser user);
+    Result<Map<String, Object>> login(RegLogUser user, HttpServletRequest request);
 
     Result registerUser(RegLogUser user);
 
