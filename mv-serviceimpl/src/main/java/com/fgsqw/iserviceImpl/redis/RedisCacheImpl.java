@@ -46,4 +46,13 @@ public class RedisCacheImpl implements IRedisCacheService {
         return redisTemplate2.opsForValue().get(key);
     }
 
+    @Override
+    public Long getExpireDate(String key) {
+        Long rtn = redisTemplate.getExpire(key, TimeUnit.SECONDS);
+        if (null == rtn) {
+            return 0l;
+        }
+        return rtn;
+    }
+
 }

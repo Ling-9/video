@@ -13,4 +13,6 @@ public interface IRedisCacheService {
     void setObject(String key, Object value);
 
     Object getObject(String key);
+
+    Long getExpireDate(String key);
 }

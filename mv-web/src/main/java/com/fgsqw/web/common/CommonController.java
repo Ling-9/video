@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/common")
@@ -96,6 +97,7 @@ public class CommonController {
 //                lineCaptcha.verify("1234");
         //获取验证码文本内容
         String text = lineCaptcha.getCode();
+        System.out.println("captcha = " + text);
         //将验证码文本内容放入session
         request.getSession().setAttribute("captcha", text);
         //根据文本验证码内容创建图形验证码
@@ -136,13 +138,32 @@ public class CommonController {
             if(userService.checkUserEmail(user.getEmail())){
                 return Result.fail("当前邮箱已被注册!");
             }
-            // 发送验证码
-            String verifyCode = emailUtil.sendCodeMessage(user);
-            cacheService.setString(user.getUserName() + "_verifyCode",verifyCode,180);
+            if(cacheService.getExpireDate(user.getUserName() + "_verifyCode") > 60L){
+                return Result.fail("1分钟内请勿重复获取验证码");
+            }
+            String verifyCode = generateVerifyCode(6);
+            // 先缓存再发送
+            cacheService.setString(user.getUserName() + "_verifyCode",verifyCode,300);
+            user.setVerifyCode(verifyCode);
+            emailUtil.sendCodeMessage(user);
         }catch (Exception e){
             e.printStackTrace();
             return Result.fail("邮箱验证码发送失败！");
         }
         return Result.ok(ResultCodeEnum.VERIFY_CODE_SUCCESS);
+    }
+
+    /**
+     * 生成随机验证码
+     * @param number 几位数
+     * @return
+     */
+    private String generateVerifyCode(int number) {
+        Random random = new Random();
+        StringBuilder builder = new StringBuilder();
+        for (int i = 1; i <= number; i++) {
+            builder.append(random.nextInt(10));
+        }
+        return builder.toString();
     }
 }
