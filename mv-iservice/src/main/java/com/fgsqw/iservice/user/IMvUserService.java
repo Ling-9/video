@@ -3,9 +3,11 @@ package com.fgsqw.iservice.user;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fgsqw.beans.result.Result;
 import com.fgsqw.beans.user.MvUser;
+import com.fgsqw.beans.user.QueryUser;
 import com.fgsqw.beans.user.RegLogUser;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,4 +31,6 @@ public interface IMvUserService extends IService<MvUser> {
     MvUser getMvUserByUserName(String username);
 
     RegLogUser getRegLogUserByUserName(String username);
+
+    Result<List<MvUser>> queryUser(QueryUser user);
 }

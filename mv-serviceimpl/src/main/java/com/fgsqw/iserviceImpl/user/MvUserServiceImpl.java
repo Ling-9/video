@@ -4,12 +4,15 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fgsqw.JwtUtil;
 import com.fgsqw.beans.result.Result;
 import com.fgsqw.beans.result.ResultCodeEnum;
 import com.fgsqw.beans.user.MvUser;
+import com.fgsqw.beans.user.QueryUser;
 import com.fgsqw.beans.user.RegLogUser;
 import com.fgsqw.dao.user.MvUserMapper;
 import com.fgsqw.iservice.redis.IRedisCacheService;
@@ -28,6 +31,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -136,6 +140,19 @@ public class MvUserServiceImpl extends ServiceImpl<MvUserMapper, MvUser> impleme
         return regLogUser;
     }
 
+    @Override
+    public Result<List<MvUser>> queryUser(QueryUser user) {
+        //构造查询条件
+        LambdaQueryWrapper<MvUser> query = queryWrapper(user);
+        Integer page = user.getPage();
+        Integer limit = user.getLimit();
+        page = ObjectUtils.isNull(page) ? 1 : page;
+        limit = ObjectUtils.isNull(limit) ? 10 : limit;
+
+        Page<MvUser> userPage = page(new Page<>(page,limit),query);
+        return Result.ok(userPage.getRecords(),userPage.getTotal());
+    }
+
     private MvUser creUser(RegLogUser user) {
         MvUser mvUser = new MvUser();
         BeanUtils.copyProperties(user,mvUser);
@@ -148,10 +165,19 @@ public class MvUserServiceImpl extends ServiceImpl<MvUserMapper, MvUser> impleme
         return mvUser;
     }
 
-    private LambdaQueryWrapper<MvUser> queryWrapper(MvUser mvUser) {
+    private LambdaQueryWrapper<MvUser> queryWrapper(QueryUser user) {
         LambdaQueryWrapper<MvUser> query = Wrappers.lambdaQuery();
-        if (StrUtil.isNotBlank(mvUser.getUserName())) {
-            query.eq(MvUser::getUserName, mvUser.getUserName());
+        if (StrUtil.isNotBlank(user.getUserName())) {
+            query.eq(MvUser::getUserName, user.getUserName());
+        }
+        if (StrUtil.isNotBlank(user.getEmail())) {
+            query.eq(MvUser::getEmail, user.getEmail());
+        }
+        if (StrUtil.isNotBlank(user.getPhone())) {
+            query.eq(MvUser::getPhone, user.getPhone());
+        }
+        if (StrUtil.isNotBlank(user.getStatus())) {
+            query.eq(MvUser::getStatus, user.getStatus());
         }
         return query;
     }

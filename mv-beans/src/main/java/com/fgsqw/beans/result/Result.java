@@ -22,7 +22,7 @@ public class Result<T> {
     private T object;
 
     @ApiModelProperty(value = "条数")
-    private Integer total = 0;
+    private Long total = 0L;
 
     private Result(Integer returnCode,String resMessage) {
         this.returnCode = returnCode;
@@ -45,7 +45,7 @@ public class Result<T> {
         this.object = object;
     }
 
-    private Result(T object,ResultCodeEnum resultCodeEnum,Integer total) {
+    private Result(T object,ResultCodeEnum resultCodeEnum,Long total) {
         this.returnCode = resultCodeEnum.getCode();
         this.resMessage = resultCodeEnum.getMessage();
         this.object = object;
@@ -72,7 +72,7 @@ public class Result<T> {
         return new Result<>(resMessage,object);
     }
 
-    public static<T> Result<T> ok(@Nullable T object,Integer total) {
+    public static<T> Result<T> ok(@Nullable T object,Long total) {
         return new Result<>(object,ResultCodeEnum.SUCCESS,total);
     }
 

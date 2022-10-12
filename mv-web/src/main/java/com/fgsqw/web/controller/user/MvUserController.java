@@ -3,6 +3,7 @@ package com.fgsqw.web.controller.user;
 import cn.hutool.core.util.ObjectUtil;
 import com.fgsqw.beans.result.Result;
 import com.fgsqw.beans.user.MvUser;
+import com.fgsqw.beans.user.QueryUser;
 import com.fgsqw.beans.user.RegLogUser;
 import com.fgsqw.iservice.user.IMvUserService;
 import io.swagger.annotations.ApiOperation;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 
 
@@ -63,4 +65,14 @@ public class MvUserController {
         }
     }
 
+    @ApiOperation(value = "根据条件查询User")
+    @PostMapping("query")
+    public Result<List<MvUser>> queryUser(@RequestBody QueryUser user){
+        try {
+            return userService.queryUser(user);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.fail("查询用户失败!");
+        }
+    }
 }
