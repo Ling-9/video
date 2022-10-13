@@ -34,6 +34,7 @@
         <swagger2.version>2.9.2</swagger2.version>
         <swagger2Ui.version>1.9.6</swagger2Ui.version>
         <jjwt.version>0.9.1</jjwt.version>
+        <minio.version>7.0.2</minio.version>
     </properties>
 
     <dependencyManagement>
@@ -78,6 +79,12 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>${minio.version}</version>
             </dependency>
 
             <dependency>

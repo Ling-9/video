@@ -1,19 +1,15 @@
 package com.fgsqw.beans.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class LoginUser implements UserDetails {
+public class LoginUser extends MvUser implements UserDetails {
 
-    private RegLogUser logUser;
+    public LoginUser(MvUser mvUser){
+        super(mvUser);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -22,12 +18,12 @@ public class LoginUser implements UserDetails {
 
     @Override
     public String getPassword() {
-        return logUser.getPasswd();
+        return super.getPasswd();
     }
 
     @Override
     public String getUsername() {
-        return logUser.getUserName();
+        return super.getUserName();
     }
 
     @Override
@@ -47,6 +43,6 @@ public class LoginUser implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return logUser.getStatus() == 1;
+        return super.getStatus() == 1;
     }
 }

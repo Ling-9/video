@@ -5,6 +5,7 @@ import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.fgsqw.EmailUtil;
+import com.fgsqw.MinioUtil;
 import com.fgsqw.beans.result.Result;
 import com.fgsqw.beans.result.ResultCodeEnum;
 import com.fgsqw.beans.user.RegLogUser;
@@ -15,6 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
@@ -28,6 +30,9 @@ import java.util.Random;
 @RequestMapping("/common")
 @Slf4j
 public class CommonController {
+
+    @Autowired
+    private MinioUtil minioUtil;
     @Autowired
     private EmailUtil emailUtil;
     @Autowired
@@ -151,6 +156,12 @@ public class CommonController {
             return Result.fail("邮箱验证码发送失败！");
         }
         return Result.ok(ResultCodeEnum.VERIFY_CODE_SUCCESS);
+    }
+
+    @ApiOperation(value = "通用文件上传/支持图片文件视频")
+    @PostMapping("/update")
+    public String upload(MultipartFile file) throws Exception {
+        return minioUtil.upload(file);
     }
 
     /**
