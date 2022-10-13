@@ -39,19 +39,16 @@ public class MvUserController {
     @ApiOperation(value = "退出登录")
     @GetMapping("logout")
     public Result logout(){
-        return null;
+        return Result.ok("退出成功!");
     }
 
     @ApiOperation(value = "获取当前登录用户信息")
     @GetMapping("info")
-    public Result<MvUser> getUserInfo(Principal principal){
+    public Result<Map<String,String>> getUserInfo(Principal principal){
         if(ObjectUtil.isEmpty(principal)){
-            return Result.ok();
+            return Result.fail();
         }
-        String name = principal.getName();
-        MvUser user = userService.getMvUserByUserName(name);
-        user.setPasswd(null);
-        return Result.ok(user);
+        return userService.queryInfo(principal);
     }
 
     @ApiOperation(value = "注册用户")

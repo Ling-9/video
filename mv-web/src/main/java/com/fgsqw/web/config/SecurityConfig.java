@@ -2,7 +2,7 @@ package com.fgsqw.web.config;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.fgsqw.beans.user.LoginUser;
-import com.fgsqw.beans.user.RegLogUser;
+import com.fgsqw.beans.user.MvUser;
 import com.fgsqw.iservice.user.IMvUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -43,6 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(
+                "/common/captcha",
+                "/common/captcha2",
                 "/user/login",
                 "/user/logout",
                 "index.html",
@@ -61,11 +63,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public UserDetailsService userDetailsService() {
         // 重写 UserDetailsService下的 loadUserByUsername 使其从数据库中查询用户数据进行比对
         return username->{
-            RegLogUser regLogUser = userService.getRegLogUserByUserName(username);
-            if(ObjectUtil.isEmpty(regLogUser)){
+            MvUser mvUser = userService.getMvUserByUserName(username);
+            if(ObjectUtil.isEmpty(mvUser)){
                 return null;
             }
-            return new LoginUser(regLogUser);
+            return new LoginUser(mvUser);
         };
     }
 

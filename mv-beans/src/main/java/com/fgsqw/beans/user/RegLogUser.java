@@ -28,7 +28,4 @@ public class RegLogUser implements Serializable {
 
     @ApiModelProperty(value = "验证码")
     private String verifyCode;
-
-    @ApiModelProperty(value = "状态：0 正常 1 封禁")
-    private Integer status;
 }

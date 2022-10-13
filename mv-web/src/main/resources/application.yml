@@ -1,5 +1,12 @@
 server:
   port: 17100
+minio:
+  endpoint: http://xc27.top:9090
+  access-key: admin
+  secret-key: ..
+  imageBucketName: picture
+  fileBucketName: file
+  videoBucketName: video
 spring:
   datasource:
     username: root
@@ -38,6 +45,9 @@ spring:
       use-global-data-source-stat: true
       # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
       connect-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
   redis:
     database: 0
     host: xc27.top
@@ -75,3 +85,11 @@ jwt:
   expiration: 604800
   # JWT 负载头
   tokenHead: Bearer
+mybatis-plus:
+  global-config:
+    banner: false
+  configuration:
+    call-setters-on-nulls: true
+    map-underscore-to-camel-case: true
+    auto-mapping-behavior: full
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

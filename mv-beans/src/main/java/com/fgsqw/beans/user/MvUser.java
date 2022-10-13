@@ -99,5 +99,16 @@ public class MvUser implements Serializable {
     @ApiModelProperty(value = "临时字段")
     private String field;
 
+    public MvUser(){
 
+    }
+
+    public MvUser(MvUser mvUser){
+        this.sid = mvUser.getSid();
+        this.userName = mvUser.getUserName();
+        this.passwd = mvUser.getPasswd();
+        this.email = mvUser.getEmail();
+        this.phone = mvUser.getPhone();
+        this.status = mvUser.getStatus();
+    }
 }
